@@ -1,0 +1,4 @@
+Flask==3.1.0
+matplotlib==3.10.0
+numpy==1.26.4
+PuLP==3.2.1
