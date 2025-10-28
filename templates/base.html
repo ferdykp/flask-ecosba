@@ -1,0 +1,31 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% include 'partials/head.html' %}
+  </head>
+
+  <body class="g-sidenav-show bg-gray-100 flex">
+    <div
+      class="min-height-400 position-absolute w-100"
+      style="
+        background-image: url('static/assets/img/padi.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        opacity: 0.8;
+      "
+    ></div>
+
+    <div class="flex w-full">
+      {% include 'partials/sidebar.html' %}
+
+      <main
+        class="flex-1 main-content position-relative border-radius-lg p-4 ml-64"
+      >
+        {% include 'partials/navbar.html' %} {% block content %}{% endblock %}
+        {% include 'partials/footer.html' %}
+      </main>
+    </div>
+  </body>
+</html>

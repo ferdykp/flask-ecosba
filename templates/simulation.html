@@ -1,0 +1,233 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container-fluid py-4">
+  <div class="row justify-content-center m-3">
+    <div class="card w-100">
+      <div class="card-header mt-2">
+        <div class="w-100 w-md-auto">
+          <h4 class="fw-bold text-success">Form Lahan Sawah</h4>
+          <hr class="bg-success border-2 border-top border-success" />
+        </div>
+      </div>
+
+      <div class="card-body">
+        <form
+          method="POST"
+          action=""
+          enctype="multipart/form-data"
+          onsubmit="return validateForm()"
+        >
+          <!-- Nama Daerah -->
+          <div class="form-group row align-items-center mb-3">
+            <label class="col-md-3 col-form-label fw-bold">Nama Daerah</label>
+            <div class="col-md-8">
+              <input
+                type="text"
+                name="nama_daerah"
+                class="form-control"
+                placeholder="Contoh: Gresik"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- Pilihan Metode Input -->
+          <div class="form-group row align-items-center mb-3">
+            <label class="col-md-3 col-form-label fw-bold">Metode Input</label>
+            <div class="col-md-8 d-flex flex-wrap gap-3">
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="input_type"
+                  id="input_luas"
+                  value="luas"
+                  checked
+                  onchange="toggleInputMethod()"
+                />
+                <label class="form-check-label" for="input_luas"
+                  >Input Luas Lahan</label
+                >
+              </div>
+
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="input_type"
+                  id="input_dimensi"
+                  value="dimensi"
+                  onchange="toggleInputMethod()"
+                />
+                <label class="form-check-label" for="input_dimensi"
+                  >Input Panjang & Lebar</label
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Input Luas -->
+          <div
+            id="inputLuasField"
+            class="form-group row align-items-center mb-3"
+          >
+            <label class="col-md-3 col-form-label fw-bold"
+              >Luas Lahan (m²)</label
+            >
+            <div class="col-md-8">
+              <input
+                type="number"
+                id="luas_lahan"
+                name="luas_lahan"
+                class="form-control"
+                placeholder="Contoh: 500"
+                min="0"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- Input Panjang dan Lebar -->
+          <div id="inputDimensiField" class="d-none">
+            <div class="form-group row align-items-center mb-3">
+              <label class="col-md-3 col-form-label fw-bold"
+                >Panjang Lahan (m)</label
+              >
+              <div class="col-md-8">
+                <input
+                  type="number"
+                  id="panjang_lahan"
+                  class="form-control"
+                  placeholder="Contoh: 20"
+                  min="0"
+                />
+              </div>
+            </div>
+
+            <div class="form-group row align-items-center mb-3">
+              <label class="col-md-3 col-form-label fw-bold"
+                >Lebar Lahan (m)</label
+              >
+              <div class="col-md-8">
+                <input
+                  type="number"
+                  id="lebar_lahan"
+                  class="form-control"
+                  placeholder="Contoh: 25"
+                  min="0"
+                />
+              </div>
+            </div>
+
+            <!-- Luas otomatis dihitung -->
+            <div class="form-group row align-items-center mb-3">
+              <label class="col-md-3 col-form-label fw-bold text-muted"
+                >Luas Otomatis (m²)</label
+              >
+              <div class="col-md-8">
+                <input
+                  type="number"
+                  id="luas_otomatis"
+                  class="form-control bg-light"
+                  readonly
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Tombol Submit -->
+          <div class="form-group row mb-0">
+            <div class="col-md-6 offset-md-3 text-center">
+              <button type="submit" class="btn btn-success px-4 py-2 fw-bold">
+                Jalankan Simulasi
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Hasil Simulasi -->
+    <div class="card w-100 mt-4">
+      <div class="card-header mt-2">
+        <div class="w-100 w-md-auto">
+          <h4 class="fw-bold text-success">Hasil Simulasi</h4>
+          <hr class="bg-success border-2 border-top border-success" />
+        </div>
+      </div>
+
+      <div class="card-body">
+        {% if gambar %}
+        <h5><strong>Nama Daerah:</strong> {{ nama_daerah }}</h5>
+        <h5><strong>Luas Lahan:</strong> {{ luas_lahan }} m²</h5>
+        <div class="text-center">
+          <h5 class="text-success mt-4">Simulasi Penempatan Sensor</h5>
+          <img
+            src="{{ url_for('static', filename=gambar.split('static/')[-1]) }}"
+            class="img-fluid rounded shadow"
+            alt="Hasil Simulasi"
+          />
+        </div>
+
+        {% for item in hasil %}
+        <div class="mt-4">
+          <h6><strong>{{ item.label }}</strong></h6>
+          <p><strong>Koordinat Sensor:</strong></p>
+          <ul>
+            {% for s in item.sensor %}
+            <li>({{ s[0] }}, {{ s[1] }})</li>
+            {% endfor %}
+          </ul>
+          <p>
+            <strong>Area Tidak Tercakup:</strong> {{ item.tidak_tercakup }}%
+          </p>
+        </div>
+        {% endfor %} {% else %}
+        <div class="text-center py-5">
+          <h5 class="text-muted">Belum ada hasil simulasi</h5>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleInputMethod() {
+    const inputLuas = document.getElementById("input_luas").checked;
+    const luasField = document.getElementById("inputLuasField");
+    const dimensiField = document.getElementById("inputDimensiField");
+    const luasInput = document.getElementById("luas_lahan");
+    const panjang = document.getElementById("panjang_lahan");
+    const lebar = document.getElementById("lebar_lahan");
+
+    if (inputLuas) {
+      luasField.classList.remove("d-none");
+      dimensiField.classList.add("d-none");
+      luasInput.required = true;
+      panjang.required = false;
+      lebar.required = false;
+    } else {
+      luasField.classList.add("d-none");
+      dimensiField.classList.remove("d-none");
+      luasInput.required = false;
+      panjang.required = true;
+      lebar.required = true;
+    }
+  }
+
+  // Update luas otomatis kalau panjang & lebar diisi
+  document.addEventListener("input", function () {
+    const panjang = parseFloat(
+      document.getElementById("panjang_lahan")?.value || 0
+    );
+    const lebar = parseFloat(
+      document.getElementById("lebar_lahan")?.value || 0
+    );
+    const luas = panjang * lebar;
+    document.getElementById("luas_otomatis").value = luas
+      ? luas.toFixed(2)
+      : "";
+    document.getElementById("luas_lahan").value = luas ? luas.toFixed(2) : "";
+  });
+</script>
+{% endblock %}
